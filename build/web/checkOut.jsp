@@ -78,7 +78,41 @@
                     </table>
                 </c:if>
             </c:if>
-            <input class="btn btn-dark" type="submit" name="action" value="Paid">
+                    <input class="btn btn-dark" type="submit" name="action" value="Paid"><br><br>
+            <c:set var="USD" value="${paypal / 23000}"/>  
+            <script src="https://www.paypal.com/sdk/js?client-id=AcAFM4JjI-FeKIwzFLUzCUJRMzbkEd5zxYpA_zc6NHiWlpOe8QQtp6Eo8QUlJ0VutXnhGLV60JNtF8N9"></script>
+            <div id="paypal-button-container" style="width: 50px"></div>
+            <script>
+                paypal.Buttons({
+                    // Set up the transaction
+                    createOrder: function (data, actions) {
+                        return actions.order.create({
+                            purchase_units: [{
+                                    amount: {
+                                        value: '<fmt:formatNumber value="${USD}" maxFractionDigits="2"/>'.replace(',','.')
+                                    }
+                                }]
+                        });
+                    },
+                    // Finalize the transaction
+                    onApprove: function (data, actions) {
+                        return actions.order.capture().then(function (details) {
+                            // Show a success message to the buyer                        
+                            var url = "CheckOutController";
+                            var params = '?btAction=Check out&txtTotal=${paypal}' ;
+                            location.replace(url + params);
+                        });
+                    },           
+                    style: {
+                        size: 'small',
+                        color: 'blue',
+                        shape: 'pill',
+                        label: 'pay',
+                        height: 40
+                    }
+                }).render('#paypal-button-container');
+                //This function displays Smart Payment Buttons on your web page.
+            </script>
         </form>
     </body>
 </html>

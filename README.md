@@ -7,6 +7,6 @@
 * The look and feel of a normal sales site and it has CRUD, shopping cart and checkout
 #### Connect me via:
 [My facebook](https://facebook.com/voxquoocshuyy)  
-[My istagram](https://www.instagram.com/voxquoocshuyy)
+[My istagram](https://www.instagram.com/voxquoocshuyy)<br>
 [My email](gmailto: voquochuy1502@gmail.com)<br>
 © 2021 voxquoocshuyy

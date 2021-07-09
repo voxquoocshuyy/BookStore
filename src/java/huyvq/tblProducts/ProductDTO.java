@@ -22,12 +22,20 @@ public class ProductDTO {
     Date dateAdd;
     String categoryName;
     String categoryID;
-
+    String images;
     public ProductDTO() {
     }
 
     public ProductDTO(int bookID) {
         this.bookID = bookID;
+    }
+
+    public String getImages() {
+        return images;
+    }
+
+    public void setImages(String images) {
+        this.images = images;
     }
     
 
@@ -59,18 +67,17 @@ public class ProductDTO {
         this.categoryID = categoryID;
     }
 
-
-
-    
-
-    public ProductDTO(String bookName, float price, int quantity, String description, String author, String categoryID) {
+    public ProductDTO(String bookName, float price, int quantity, String description, String author, String categoryID, String images) {
         this.bookName = bookName;
         this.price = price;
         this.quantity = quantity;
         this.description = description;
         this.author = author;
         this.categoryID = categoryID;
+        this.images = images;
     }
+
+
 
     public String getCategoryID() {
         return categoryID;

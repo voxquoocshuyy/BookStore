@@ -14,7 +14,7 @@
         <title>Create Book</title>
     </head>
     <body class="container">
-        <form action="MainController" method="POST">    
+        <form action="CreateController" method="POST" enctype="multipart/form-data">
             <a href="AdminViewController"><-Back to continue</a>
 
             <div class="form-group row">
@@ -66,8 +66,14 @@
                     </select>
                 </div>             
             </div>
-
-            <input class="btn btn-dark" type="submit" name="action" value="Create">
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Image :</label>
+                    <div class="col-sm-10">
+                     <input type="file" name="file"><br>                        
+                    </div>
+                </div>
+                
+            <input class="btn btn-dark" type="submit" name="CreateController" value="Create">
             <input class="btn btn-dark" type="reset" value="Reset"> 
         </form>
     </body>

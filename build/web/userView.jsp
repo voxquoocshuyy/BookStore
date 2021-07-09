@@ -29,9 +29,9 @@
                 <a href="GetAllHistoryController">Shopping history </a><br>
             </c:if>
             <font color="red"> ${requestScope.NOTI}</font><br>
-            Search Name Book <input type="text" name="nameBook" value="${param.nameBook}"/>
-            Search Category Book <input type="text" name="categoryName" value="${param.categoryName}"/>
-            Search Price Book <input type="text" name="price" value="${param.price}"/>
+            Search Name Book <input class="form-control"  type="text" name="nameBook" value="${param.nameBook}"/>
+            Search Category Book <input class="form-control"  type="text" name="categoryName" value="${param.categoryName}"/>
+            Search Price Book <input class="form-control"  type="text" name="price" value="${param.price}"/>
             <input class="btn btn-dark" type="submit" name="action" value="Search">
         </form>
             <c:if test="${empty requestScope.LIST_BOOK}">
@@ -67,7 +67,7 @@
                         <td><input class="form-control" value="${dto.description}" readonly </td>
                         <td><input class="form-control" value="${dto.author}" readonly </td>
                         <td><input class="form-control" value="${dto.categoryName}" readonly </td>
-                        <td><input  class="btn btn-dark" type="submit" name="action" value="Add to cart"</td>
+                        <td><input class="btn btn-dark" type="submit" name="action" value="Add to cart"</td>
                         </tr>
                     </form> 
                 </c:forEach>

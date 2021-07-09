@@ -11,14 +11,24 @@ import huyvq.tblProducts.ProductDAO;
 import huyvq.tblProducts.ProductDTO;
 import huyvq.tblProducts.ProductError;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.tomcat.dbcp.pool2.PoolUtils;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.io.File;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+
 
 /**
  *
@@ -43,54 +53,88 @@ public class CreateController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String url = ERROR;
-        String bookName = request.getParameter("bookName");   
-        String description = request.getParameter("description");
-        String author = request.getParameter("author");
-        String categoryID = request.getParameter("category");
-        ProductError error = new ProductError();
-        boolean flag = true;
-        float price = 0;
-        int quantity = 0;
         try {
-            if (bookName.isEmpty() || (bookName.length() < 2 || bookName.length() > 50)) {
-                error.setBookNameError("Book Name must be [2-50] characters");
-                flag = false;
-            }
-            try {
-                String temp1 = request.getParameter("price");
-                price = Float.parseFloat(temp1);
-            } catch (NumberFormatException e) {
-                error.setPriceError("Price is not correct format");  
-                flag = false;
-            }
-            try {
-                String temp2 = request.getParameter("quantity");
-                quantity = Integer.parseInt(temp2);
-            } catch (NumberFormatException e) {
-                error.setQuantityError("Quantity is not correct format"); 
-                flag = false;
-            }
-            if(description.isEmpty() || (description.length() < 2 || description.length() > 50)){
-                error.setDescriptionError("Description must be [2-50]");
-                flag = false;
-            }
-            if(author.isEmpty() || (author.length() < 2 || author.length() > 50)){
-                error.setAuthorError("Author must be [2-50]");
-                flag = false;
-            }
-            if(flag){    
-                ProductDAO dao = new ProductDAO();
-                ProductDTO book = new ProductDTO(bookName, price, quantity, description, author, categoryID);
-                dao.create(book);
-                url = SUCCESS;
-            }else{
-                CategoryDAO daoCate = new CategoryDAO();
-                List<CategoryDTO> list = daoCate.getAll();
-                request.setAttribute("LIST_CATE", list);
-                request.setAttribute("ERROR", error);
-                url = ERROR;
-            }
+            boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
+            if (!isMultiPart) {
+            } else {
+                FileItemFactory factory = new DiskFileItemFactory();
+                ServletFileUpload upload = new ServletFileUpload(factory);
+                List items = null;
+                try {
+                    items = upload.parseRequest(request);
+                } catch (FileUploadException e) {
+                    log("error at upload file:" + e);
+                }
+                Iterator iter = items.iterator();
+                Hashtable params = new Hashtable();
+                String itemName = null;
+                while (iter.hasNext()) {
+                    FileItem item = (FileItem) iter.next();
+                    if (item.isFormField()) {
+                        params.put(item.getFieldName(), item.getString());
+                    } else {
+                        try {
+                            itemName = item.getName();
+                            String realPath = "C:\\Users\\Quoc Huy\\Documents\\NetBeansProjects\\J3.L.P0002\\web\\images\\" + itemName;
+                            log("RealPath: " + realPath);
+                            File savedFile = new File(realPath);
+                            if (!savedFile.exists()) {
+                                item.write(savedFile);
+                            }
+                        } catch (Exception e) {
+                            log("error at upload file:" + e);
+                        }
+                    }
+                }
 
+                String bookName = (String) params.get("bookName");
+                String description = (String) params.get("description");
+                String author = (String) params.get("author");
+                String categoryID = (String) params.get("category");
+                ProductError error = new ProductError();
+                boolean flag = true;
+                float price = 0;
+                int quantity = 0;
+
+                if (bookName.isEmpty() || (bookName.length() < 2 || bookName.length() > 50)) {
+                    error.setBookNameError("Book Name must be [2-50] characters");
+                    flag = false;
+                }
+                try {
+                    String temp1 = (String) params.get("price");
+                    price = Float.parseFloat(temp1);
+                } catch (NumberFormatException e) {
+                    error.setPriceError("Price is not correct format");
+                    flag = false;
+                }
+                try {
+                    String temp2 = (String) params.get("quantity");
+                    quantity = Integer.parseInt(temp2);
+                } catch (NumberFormatException e) {
+                    error.setQuantityError("Quantity is not correct format");
+                    flag = false;
+                }
+                if (description.isEmpty() || (description.length() < 2 || description.length() > 50)) {
+                    error.setDescriptionError("Description must be [2-50]");
+                    flag = false;
+                }
+                if (author.isEmpty() || (author.length() < 2 || author.length() > 50)) {
+                    error.setAuthorError("Author must be [2-50]");
+                    flag = false;
+                }
+                if (flag) {
+                    ProductDAO dao = new ProductDAO();
+                    ProductDTO book = new ProductDTO(bookName, price, quantity, description, author, categoryID, itemName);
+                    dao.create(book);
+                    url = SUCCESS;
+                } else {
+                    CategoryDAO daoCate = new CategoryDAO();
+                    List<CategoryDTO> list = daoCate.getAll();
+                    request.setAttribute("LIST_CATE", list);
+                    request.setAttribute("ERROR", error);
+                    url = ERROR;
+                }
+            }
         } catch (Exception e) {
             log("Error at CreatController: " + e.getMessage());
             e.printStackTrace();

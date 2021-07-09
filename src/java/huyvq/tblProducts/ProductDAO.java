@@ -138,7 +138,7 @@ public class ProductDAO {
     public boolean create(ProductDTO book) throws NamingException, SQLException {
         try {
             conn = DBUtils.getConnection();
-            String sql = "INSERT INTO tblProducts(bookName, price, quantity, description, author, categoryID) VALUES (?,?,?,?,?,?)";
+            String sql = "INSERT INTO tblProducts(bookName, price, quantity, description, author, categoryID, image) VALUES (?,?,?,?,?,?,?)";
             stm = conn.prepareStatement(sql);
             stm.setString(1, book.getBookName());
             stm.setFloat(2, book.getPrice());
@@ -146,6 +146,7 @@ public class ProductDAO {
             stm.setString(4, book.getDescription());
             stm.setString(5, book.getAuthor());
             stm.setString(6, book.getCategoryID());
+            stm.setString(7, book.getImages());
             return stm.executeUpdate() > 0;
         } finally {
             closeConnection();
